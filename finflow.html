@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="theme-color" content="#0a0a0f">
+  <title>Meu Gestor Financeiro</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=Fraunces:ital,wght@0,400;0,700;1,300;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+<div class="shell">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-top">
+      <div class="brand">
+        <div class="brand-icon">₲</div>
+        <div>
+          <div class="brand-name">CRISTIANO CIRIACO</div>
+          <div class="brand-sub">Gestor Financeiro</div>
+        </div>
+      </div>
+      <button class="close-drawer" onclick="closeSidebar()">✕</button>
+    </div>
+
+    <div class="month-switcher">
+      <button onclick="prevMonth()">‹</button>
+      <span id="sidebar-month-label"></span>
+      <button onclick="nextMonth()">›</button>
+    </div>
+
+    <nav class="nav">
+      <div class="nav-item active" data-page="dashboard" onclick="goTo('dashboard')">
+        <span class="nav-ico">◈</span><span>Dashboard</span>
+      </div>
+      <div class="nav-item" data-page="lancamentos" onclick="goTo('lancamentos')">
+        <span class="nav-ico">⊕</span><span>Lançamentos</span>
+      </div>
+      <div class="nav-item" data-page="relatorio" onclick="goTo('relatorio')">
+        <span class="nav-ico">◎</span><span>Relatório Mensal</span>
+      </div>
+      <div class="nav-item" data-page="historico" onclick="goTo('historico')">
+        <span class="nav-ico">◷</span><span>Histórico</span>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sf-label">Saldo do mês</div>
+      <div class="sf-value" id="sidebar-balance">R$ 0,00</div>
+    </div>
+  </aside>
+
+  <!-- CONTENT -->
+  <div class="content-wrap">
+
+    <!-- TOPBAR mobile -->
+    <header class="topbar">
+      <button class="hamburger" onclick="openSidebar()">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="topbar-center">
+        <span class="topbar-brand">FinFlow</span>
+        <span class="topbar-month" id="topbar-month"></span>
+      </div>
+      <button class="topbar-add" onclick="openModal()">+</button>
+    </header>
+
+    <main class="main">
+
+      <!-- DASHBOARD -->
+      <section class="page active" id="page-dashboard">
+        <div class="page-header">
+          <h1 class="page-title">Dashboard</h1>
+          <div class="month-nav desktop-only">
+            <button class="mn-btn" onclick="prevMonth()">‹</button>
+            <span class="mn-label" id="desktop-month-label"></span>
+            <button class="mn-btn" onclick="nextMonth()">›</button>
+          </div>
+        </div>
+
+        <div class="summary-grid">
+          <div class="sum-card income-card">
+            <div class="sum-card-header">
+              <span class="sum-card-label">Total Ganhos</span>
+              <span class="sum-card-icon income-icon">↑</span>
+            </div>
+            <div class="sum-card-value income-text" id="dash-income">R$ 0,00</div>
+            <div class="sum-card-sub" id="dash-income-count">0 lançamentos</div>
+          </div>
+          <div class="sum-card expense-card">
+            <div class="sum-card-header">
+              <span class="sum-card-label">Total Gastos</span>
+              <span class="sum-card-icon expense-icon">↓</span>
+            </div>
+            <div class="sum-card-value expense-text" id="dash-expense">R$ 0,00</div>
+            <div class="sum-card-sub" id="dash-expense-count">0 lançamentos</div>
+          </div>
+          <div class="sum-card balance-card">
+            <div class="sum-card-header">
+              <span class="sum-card-label">Saldo Final</span>
+              <span class="sum-card-icon">⊜</span>
+            </div>
+            <div class="sum-card-value" id="dash-balance">R$ 0,00</div>
+            <div class="sum-card-sub" id="dash-balance-status">Sem movimentos</div>
+          </div>
+        </div>
+
+        <div class="balance-visual">
+          <div class="bv-row">
+            <span class="bv-label income-text">Ganhos</span>
+            <div class="bv-bar-wrap">
+              <div class="bv-bar bv-bar-income" id="bar-income"></div>
+            </div>
+            <span class="bv-amount income-text" id="bv-income-amt">R$ 0,00</span>
+          </div>
+          <div class="bv-row">
+            <span class="bv-label expense-text">Gastos</span>
+            <div class="bv-bar-wrap">
+              <div class="bv-bar bv-bar-expense" id="bar-expense"></div>
+            </div>
+            <span class="bv-amount expense-text" id="bv-expense-amt">R$ 0,00</span>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div class="breakdown-box">
+            <div class="breakdown-title income-title">↑ Detalhamento de Ganhos</div>
+            <div id="dash-income-detail" class="breakdown-list"></div>
+          </div>
+          <div class="breakdown-box">
+            <div class="breakdown-title expense-title">↓ Detalhamento de Gastos</div>
+            <div id="dash-expense-detail" class="breakdown-list"></div>
+          </div>
+        </div>
+
+        <div class="section-title">Movimento diário do mês</div>
+        <div id="dash-daily" class="daily-list"></div>
+      </section>
+
+      <!-- LANÇAMENTOS -->
+      <section class="page" id="page-lancamentos">
+        <div class="page-header">
+          <h1 class="page-title">Lançamentos</h1>
+          <button class="btn-primary desktop-only" onclick="openModal()">+ Novo</button>
+        </div>
+
+        <div class="filter-row">
+          <button class="filter-btn active" data-filter="todos" onclick="setFilter('todos',this)">Todos</button>
+          <button class="filter-btn" data-filter="ganho" onclick="setFilter('ganho',this)">Ganhos</button>
+          <button class="filter-btn" data-filter="gasto" onclick="setFilter('gasto',this)">Gastos</button>
+        </div>
+
+        <div id="lancamentos-list" class="entries-list"></div>
+      </section>
+
+      <!-- RELATÓRIO -->
+      <section class="page" id="page-relatorio">
+        <div class="page-header">
+          <h1 class="page-title">Relatório Mensal</h1>
+          <span class="page-badge" id="report-month-badge"></span>
+        </div>
+
+        <div class="report-totals">
+          <div class="rt-row">
+            <span class="rt-label">Total de Ganhos</span>
+            <span class="rt-value income-text" id="rep-income">R$ 0,00</span>
+          </div>
+          <div class="rt-divider"></div>
+          <div class="rt-row">
+            <span class="rt-label">Total de Gastos</span>
+            <span class="rt-value expense-text" id="rep-expense">R$ 0,00</span>
+          </div>
+          <div class="rt-divider"></div>
+          <div class="rt-row rt-final">
+            <span class="rt-label">Saldo Líquido</span>
+            <span class="rt-value rt-big" id="rep-balance">R$ 0,00</span>
+          </div>
+        </div>
+
+        <div class="section-title" style="margin-top:28px">Ganhos por categoria</div>
+        <div id="rep-income-cats" class="cat-bars"></div>
+
+        <div class="section-title" style="margin-top:24px">Gastos por categoria</div>
+        <div id="rep-expense-cats" class="cat-bars"></div>
+
+        <div class="section-title" style="margin-top:24px">Dia a dia</div>
+        <div class="table-wrap">
+          <table class="day-table">
+            <thead>
+              <tr><th>Dia</th><th>Ganhos</th><th>Gastos</th><th>Saldo do dia</th></tr>
+            </thead>
+            <tbody id="rep-day-tbody"></tbody>
+            <tfoot id="rep-day-tfoot"></tfoot>
+          </table>
+        </div>
+      </section>
+
+      <!-- HISTÓRICO -->
+      <section class="page" id="page-historico">
+        <div class="page-header">
+          <h1 class="page-title">Histórico</h1>
+        </div>
+        <div id="historico-list" class="months-list"></div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="handleOverlayClick(event)">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <h2 class="modal-title" id="modal-title">Novo Lançamento</h2>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+
+    <input type="hidden" id="edit-id">
+
+    <div class="type-toggle">
+      <button class="type-btn active" id="btn-ganho" onclick="setType('ganho')">
+        <span class="type-arrow">↑</span> Ganho
+      </button>
+      <button class="type-btn" id="btn-gasto" onclick="setType('gasto')">
+        <span class="type-arrow">↓</span> Gasto
+      </button>
+    </div>
+
+    <div class="form-grid">
+      <div class="field">
+        <label>Valor (R$)</label>
+        <input type="number" id="f-valor" placeholder="0,00" min="0" step="0.01" inputmode="decimal">
+      </div>
+      <div class="field">
+        <label>Data</label>
+        <input type="date" id="f-data">
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Descrição / Origem</label>
+      <input type="text" id="f-desc" placeholder="Ex: Salário, Freelance, Aluguel…">
+    </div>
+
+    <div class="field">
+      <label>Categoria</label>
+      <div class="cat-grid" id="cat-grid"></div>
+    </div>
+
+    <div class="field">
+      <label>Observação <span class="label-opt">(opcional)</span></label>
+      <textarea id="f-obs" placeholder="Detalhes adicionais…" rows="2"></textarea>
+    </div>
+
+    <button class="btn-save" onclick="saveEntry()">Salvar Lançamento</button>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
